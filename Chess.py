@@ -145,8 +145,12 @@ def seeCheckMate(kingX, kingY, board, color):
                     oldX, oldY = piece.getPosition()
                     new_board[oldY][oldX] = None
                     new_board[y][x] = piece
-                    if not whitePieces.seeCheck(kingX, kingY, new_board):
-                        return False
+                    if piece.getName() == 'King':
+                        if not whitePieces.seeCheck(x, y, new_board):
+                            return False
+                    else:
+                        if not whitePieces.seeCheck(kingX, kingY, new_board):
+                            return False
         return True
 
 
@@ -223,9 +227,17 @@ def runGame():
                         setPath(chessPiece)
 
                 wKing = whitePieces.getKing()
-                wKingX, wKingY = wKing.getPosition()
+                if wKing is not None:
+                    wKingX, wKingY = wKing.getPosition()
+                else:
+                    game_Over = True
+                    pass
                 bKing = blackPieces.getKing()
-                bKingX, bKingY = bKing.getPosition()
+                if bKing is not None:
+                    bKingX, bKingY = bKing.getPosition()
+                else:
+                    game_Over = True
+                    pass
 
                 if not removedCheck:
                     all_sprites_list.remove(checkHover)

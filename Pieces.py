@@ -16,7 +16,9 @@ class Player:
         self.pieces = None
 
     def getKing(self):
-        return self.king[0]
+        if self.king:
+            return self.king[0]
+        return None
 
     def put_On_Board(self, board):
         for pawn in self.pawn:
