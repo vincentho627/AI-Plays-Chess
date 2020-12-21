@@ -23,11 +23,18 @@ def initialisePieces(whitePieces, blackPieces):
     return startingBoard
 
 
-def getChessPiece():
+def getChessPiece(whiteTurn):
     x, y = pygame.mouse.get_pos()
     x = x // 60
     y = abs((480 - y) // 60)
-    return board[y][x]
+    if board[y][x] is not None:
+        if whiteTurn:
+            if board[y][x].getColor() == 'w':
+                return board[y][x]
+        else:
+            if board[y][x].getColor() == 'b':
+                return board[y][x]
+    return None
 
 
 def getChessPosition():
@@ -46,7 +53,8 @@ def moveChessPiece(chessPiece, x, y):
     if (x, y) in options:
         oldX, oldY = chessPiece.getPosition()
         if chessPiece.getName() == 'King' and chessPiece.start:
-            if x == 7 and board[oldY][5] is None and board[oldY][6] is None:
+            if x == 7 and board[oldY][5] is None and board[oldY][6] is None and board[y][x] is not None \
+                    and board[y][x].start:
                 rook = board[y][x]
                 board[y][x - 1] = chessPiece
                 board[y][x] = None
@@ -55,7 +63,8 @@ def moveChessPiece(chessPiece, x, y):
                 chessPiece.setPosition(x - 1, y)
                 rook.setPosition(oldX + 1, y)
                 rook.started()
-            elif x == 0 and board[oldY][2] is None and board[oldY][3] is None and board[oldY][1] is None:
+            elif x == 0 and board[oldY][2] is None and board[oldY][3] is None and board[oldY][1] is None \
+                    and board[y][x] is not None and board[y][x].start:
                 rook = board[y][x]
                 board[y][x + 2] = chessPiece
                 board[y][x] = None
@@ -65,9 +74,9 @@ def moveChessPiece(chessPiece, x, y):
                 rook.setPosition(oldX - 1, y)
                 rook.started()
         elif chessPiece.getName() == 'Rook' and chessPiece.start:
-            if oldX == 7 and board[oldY][5] is None and board[oldY][6] is None:
+            if oldX == 7 and board[oldY][5] is None and board[oldY][6] is None and board[oldY][4] is not None \
+                    and board[oldY][4].start:
                 king = board[y][x]
-                assert x == 4
                 board[y][oldX - 1] = king
                 board[y][x] = None
                 board[y][x + 1] = chessPiece
@@ -75,9 +84,9 @@ def moveChessPiece(chessPiece, x, y):
                 chessPiece.setPosition(x + 1, y)
                 king.setPosition(oldX - 1, y)
                 king.started()
-            elif oldX == 0 and board[oldY][2] is None and board[oldY][3] is None and board[oldY][1] is None:
+            elif oldX == 0 and board[oldY][2] is None and board[oldY][3] is None and board[oldY][1] is None \
+                    and board[oldY][4] is not None and board[oldY][4].start:
                 king = board[y][x]
-                assert x == 4
                 board[y][oldX + 2] = king
                 board[y][x] = None
                 board[y][x - 1] = board[oldY][oldX]
@@ -193,6 +202,7 @@ def runGame():
     selected = False
     chessPiece = None
     removedCheck = False
+    whiteTurn = True
 
     while not game_Over:
         screen.blit(background_surface, (0, 0))
@@ -210,6 +220,10 @@ def runGame():
                     else:
                         if moved:
                             selected = False
+                            if whiteTurn:
+                                whiteTurn = False
+                            else:
+                                whiteTurn = True
                         else:
                             pass
                     if not selected:
@@ -217,7 +231,7 @@ def runGame():
                         all_sprites_list.remove(current_Available_Paths)
                         current_Available_Paths = []
                 else:
-                    chessPiece = getChessPiece()
+                    chessPiece = getChessPiece(whiteTurn)
                     if chessPiece is None:
                         pass
                     else:
