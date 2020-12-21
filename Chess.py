@@ -1,12 +1,15 @@
 import pygame
 import sys
+import numpy as np
 
 from Effects import Hover, PathDot, CheckHover, CheckMakeHover
 from Pieces import *
+from MiniMax import findNextMove
 
 screen = pygame.display.set_mode((60 * 8, 60 * 8))
 background_surface = pygame.image.load("assets/chessboard.png").convert()
-board = [[None] * 8 for _ in range(8)]
+# board = [[None] * 8 for _ in range(8)]
+board = np.empty([8, 8], dtype=ChessPiece)
 
 all_sprites_list = pygame.sprite.Group()
 sprites = []
@@ -17,8 +20,8 @@ whitePieces = White()
 blackPieces = Black()
 
 
-def initialisePieces(whitePieces, blackPieces):
-    placedWhiteBoard = whitePieces.put_On_Board(board)
+def initialisePieces(whitePieces, blackPieces, b):
+    placedWhiteBoard = whitePieces.put_On_Board(b)
     startingBoard = blackPieces.put_On_Board(placedWhiteBoard)
     return startingBoard
 
@@ -73,6 +76,17 @@ def moveChessPiece(chessPiece, x, y):
                 chessPiece.setPosition(x + 2, y)
                 rook.setPosition(oldX - 1, y)
                 rook.started()
+            else:
+                if board[y][x] is not None:
+                    color = board[y][x].getColor()
+                    if color == 'w':
+                        whitePieces.remove(board[y][x])
+                    else:
+                        blackPieces.remove(board[y][x])
+                    all_sprites_list.remove(board[y][x])
+                board[y][x] = chessPiece
+                board[oldY][oldX] = None
+                chessPiece.setPosition(x, y)
         elif chessPiece.getName() == 'Rook' and chessPiece.start:
             if oldX == 7 and board[oldY][5] is None and board[oldY][6] is None and board[oldY][4] is not None \
                     and board[oldY][4].start:
@@ -131,9 +145,9 @@ def seeCheckMate(kingX, kingY, board, color):
         for pieceType in whitePieces.pieces.values():
             for piece in pieceType:
                 for (x, y) in piece.showOptions(board):
-                    new_board = board.copy()
-                    for i in range(len(board)):
-                        new_board[i] = board[i].copy()
+                    new_board = np.copy(board)
+                    # for i in range(len(board)):
+                    #     new_board[i] = board[i].copy()
                     oldX, oldY = piece.getPosition()
                     new_board[oldY][oldX] = None
                     new_board[y][x] = piece
@@ -148,9 +162,9 @@ def seeCheckMate(kingX, kingY, board, color):
         for pieceType in blackPieces.pieces.values():
             for piece in pieceType:
                 for (x, y) in piece.showOptions(board):
-                    new_board = board.copy()
-                    for i in range(len(board)):
-                        new_board[i] = board[i].copy()
+                    new_board = np.copy(board)
+                    # for i in range(len(board)):
+                    #     new_board[i] = board[i].copy()
                     oldX, oldY = piece.getPosition()
                     new_board[oldY][oldX] = None
                     new_board[y][x] = piece
@@ -190,7 +204,7 @@ def setCheckMate(x, y):
 
 def startGame():
     global board, all_sprites_list, sprites, whitePieces, blackPieces
-    board = initialisePieces(whitePieces, blackPieces)
+    board = initialisePieces(whitePieces, blackPieces, board)
     sprites = [piece for row in board for piece in row if piece]
     all_sprites_list.add(sprites)
 
@@ -220,10 +234,24 @@ def runGame():
                     else:
                         if moved:
                             selected = False
-                            if whiteTurn:
-                                whiteTurn = False
+                            _, move = findNextMove(whitePieces, blackPieces, 3, board)
+                            if move is not None:
+                                ((oldX, oldY), (newX, newY)) = move
+                                blackPiece = board[oldY][oldX]
+                                if board[newY][newX] is not None:
+                                    whitePieces.remove(board[newY][newX])
+                                    all_sprites_list.remove(board[newY][newX])
+                                board[oldY][oldX] = None
+                                board[newY][newX] = blackPiece
+                                blackPiece.setPosition(newX, newY)
+                                blackPiece.started()
+
                             else:
-                                whiteTurn = True
+                                print("Error!")
+                            # if whiteTurn:
+                            #     whiteTurn = False
+                            # else:
+                            #     whiteTurn = True
                         else:
                             pass
                     if not selected:
@@ -244,13 +272,13 @@ def runGame():
                 if wKing is not None:
                     wKingX, wKingY = wKing.getPosition()
                 else:
-                    game_Over = True
+                    # game_Over = True
                     pass
                 bKing = blackPieces.getKing()
                 if bKing is not None:
                     bKingX, bKingY = bKing.getPosition()
                 else:
-                    game_Over = True
+                    # game_Over = True
                     pass
 
                 if not removedCheck:

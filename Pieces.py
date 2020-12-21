@@ -1,11 +1,14 @@
 import pygame
 
 getEnemy = {'w': 'b', 'b': 'w'}
+piecePoints = {"King": 900, "Queen": 90, "Bishop": 32, "Knight": 30,
+                    "Rook": 50, "Pawn": 10}
 
 
 class Player:
 
     def __init__(self):
+        self.points = 1294
         self.king = None
         self.queen = None
         self.bishop = None
@@ -19,6 +22,13 @@ class Player:
         if self.king:
             return self.king[0]
         return None
+
+    def getPieces(self):
+        if self.pieces is not None:
+            return self.pieces.values()
+
+    def getPoints(self):
+        return self.points
 
     def put_On_Board(self, board):
         for pawn in self.pawn:
@@ -63,6 +73,22 @@ class Player:
             if (x, y) in king.showOptions(board):
                 return True
 
+    def add(self, chessPiece):
+        name = chessPiece.getName()
+        chessPiecesList = self.pieces[name]
+        isIn = False
+
+        if chessPiecesList is not None:
+            for cp in chessPiecesList:
+                if chessPiece.isEqual(cp):
+                    isIn = True
+                    break
+
+        if not isIn:
+            chessPiecesList.append(chessPiece)
+            self.points += piecePoints[chessPiece.getName()]
+            self.pieceCount += 1
+
     def remove(self, chessPiece):
         name = chessPiece.getName()
         chessPiecesList = self.pieces[name]
@@ -72,6 +98,7 @@ class Player:
                 if chessPiece.isEqual(cp):
                     chessPiecesList.remove(cp)
                     self.pieceCount -= 1
+                    self.points -= piecePoints[chessPiece.getName()]
 
 
 class White(Player):
