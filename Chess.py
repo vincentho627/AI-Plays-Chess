@@ -1,6 +1,4 @@
-import pygame
 import sys
-import numpy as np
 
 from Effects import Hover, PathDot, CheckHover, CheckMakeHover
 from Pieces import *
@@ -13,6 +11,7 @@ board = np.empty([8, 8], dtype=ChessPiece)
 
 all_sprites_list = pygame.sprite.Group()
 sprites = []
+options = None
 hover = None
 checkHover = None
 current_Available_Paths = []
@@ -48,11 +47,12 @@ def getChessPosition():
 
 
 def moveChessPiece(chessPiece, x, y):
+    global options
     if chessPiece is None:
         return False, False
     if chessPiece.getPosition() == (x, y):
         return False, True
-    options = chessPiece.showOptions(board)
+    # options = chessPiece.showOptions(board, whitePieces, blackPieces, True)
     if (x, y) in options:
         oldX, oldY = chessPiece.getPosition()
         if chessPiece.getName() == 'King' and chessPiece.start:
@@ -87,7 +87,7 @@ def moveChessPiece(chessPiece, x, y):
                 board[y][x] = chessPiece
                 board[oldY][oldX] = None
                 chessPiece.setPosition(x, y)
-        elif chessPiece.getName() == 'Rook' and chessPiece.start:
+        elif chessPiece.getName() == 'Rook' and chessPiece.start and (oldX == 7 or oldX == 0) and y == oldY:
             if oldX == 7 and board[oldY][5] is None and board[oldY][6] is None and board[oldY][4] is not None \
                     and board[oldY][4].start:
                 king = board[y][x]
@@ -144,7 +144,7 @@ def seeCheckMate(kingX, kingY, board, color):
     if color == 'b':
         for pieceType in whitePieces.pieces.values():
             for piece in pieceType:
-                for (x, y) in piece.showOptions(board):
+                for (x, y) in piece.showOptions(board, None, None, False):
                     new_board = np.copy(board)
                     # for i in range(len(board)):
                     #     new_board[i] = board[i].copy()
@@ -161,7 +161,7 @@ def seeCheckMate(kingX, kingY, board, color):
     else:
         for pieceType in blackPieces.pieces.values():
             for piece in pieceType:
-                for (x, y) in piece.showOptions(board):
+                for (x, y) in piece.showOptions(board, None, None, False):
                     new_board = np.copy(board)
                     # for i in range(len(board)):
                     #     new_board[i] = board[i].copy()
@@ -184,7 +184,8 @@ def setHover(x, y):
 
 
 def setPath(chessPiece):
-    options = chessPiece.showOptions(board)
+    global options
+    options = chessPiece.showOptions(board, whitePieces, blackPieces, True)
     for (x, y) in options:
         current_Available_Paths.append(PathDot(x, y))
     all_sprites_list.add(current_Available_Paths)
@@ -234,7 +235,7 @@ def runGame():
                     else:
                         if moved:
                             selected = False
-                            _, move = findNextMove(whitePieces, blackPieces, 3, board)
+                            _, move = findNextMove(whitePieces, blackPieces, 4, board)
                             if move is not None:
                                 ((oldX, oldY), (newX, newY)) = move
                                 blackPiece = board[oldY][oldX]
