@@ -169,14 +169,16 @@ def miniMax(whitePieces, blackPieces, depth, board, alpha, beta, maxing):
                         else:
                             v = miniMax(whitePieces, blackPieces, depth - 1, new_board, alpha, beta, False)
                             value = v.value
-                        bestValue = max(bestValue, value)
-                        alpha = max(alpha, bestValue)
 
                         if special_case:
                             new_board[y][x] = temp_piece
                             temp_piece.setPosition(x, y)
                             temp_piece.start = True
                             piece.start = True
+                            value += 10
+
+                        bestValue = max(bestValue, value)
+                        alpha = max(alpha, bestValue)
 
                         # resetting back to original states
                         if removed:
@@ -262,14 +264,16 @@ def miniMax(whitePieces, blackPieces, depth, board, alpha, beta, maxing):
                         else:
                             v = miniMax(whitePieces, blackPieces, depth - 1, new_board, alpha, beta, True)
                             value = v.value
-                        bestValue = min(bestValue, value)
-                        beta = min(beta, bestValue)
 
                         if special_case:
                             new_board[y][x] = temp_piece
                             temp_piece.setPosition(x, y)
                             temp_piece.start = True
                             piece.start = True
+                            value -= 10
+
+                        bestValue = min(bestValue, value)
+                        beta = min(beta, bestValue)
 
                         # resetting back to original states
                         if removed:
