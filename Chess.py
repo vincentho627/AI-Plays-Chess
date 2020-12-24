@@ -6,7 +6,6 @@ from MiniMax import findNextMove
 
 screen = pygame.display.set_mode((60 * 8, 60 * 8))
 background_surface = pygame.image.load("assets/chessboard.png").convert()
-# board = [[None] * 8 for _ in range(8)]
 board = np.empty([8, 8], dtype=ChessPiece)
 
 all_sprites_list = pygame.sprite.Group()
@@ -146,8 +145,6 @@ def seeCheckMate(kingX, kingY, board, color):
             for piece in pieceType:
                 for (x, y) in piece.showOptions(board, None, None, False):
                     new_board = np.copy(board)
-                    # for i in range(len(board)):
-                    #     new_board[i] = board[i].copy()
                     oldX, oldY = piece.getPosition()
                     new_board[oldY][oldX] = None
                     new_board[y][x] = piece
@@ -163,8 +160,6 @@ def seeCheckMate(kingX, kingY, board, color):
             for piece in pieceType:
                 for (x, y) in piece.showOptions(board, None, None, False):
                     new_board = np.copy(board)
-                    # for i in range(len(board)):
-                    #     new_board[i] = board[i].copy()
                     oldX, oldY = piece.getPosition()
                     new_board[oldY][oldX] = None
                     new_board[y][x] = piece
@@ -249,10 +244,6 @@ def runGame():
 
                             else:
                                 print("Error!")
-                            # if whiteTurn:
-                            #     whiteTurn = False
-                            # else:
-                            #     whiteTurn = True
                         else:
                             pass
                     if not selected:
@@ -273,12 +264,14 @@ def runGame():
                 if wKing is not None:
                     wKingX, wKingY = wKing.getPosition()
                 else:
+                    setCheckMate(wKingX, wKingY)
                     # game_Over = True
                     pass
                 bKing = blackPieces.getKing()
                 if bKing is not None:
                     bKingX, bKingY = bKing.getPosition()
                 else:
+                    setCheckMate(bKingX, bKingY)
                     # game_Over = True
                     pass
 

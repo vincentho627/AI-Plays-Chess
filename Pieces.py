@@ -2,7 +2,7 @@ import pygame
 import numpy as np
 
 getEnemy = {'w': 'b', 'b': 'w'}
-piecePoints = {"King": 900, "Queen": 90, "Bishop": 30, "Knight": 30,
+piecePoints = {"King": 900, "Queen": 90, "Bishop": 32, "Knight": 30,
                     "Rook": 50, "Pawn": 10}
 
 pawnPoints = [
@@ -17,7 +17,7 @@ pawnPoints = [
 ]
 
 knightPoints = [
-    [-5, -4, -3, -3, -3, -4, -5],
+    [-5, -4, -3, -3, -3, -3, -4, -5],
     [-4, -2, 0, 0, 0, 0, -2, -4],
     [-3, 0, 1, 1.5, 1.5, 1, 0, -3],
     [-3, 0.5, 1.5, 2, 2, 1.5, 0.5, -3],
@@ -93,6 +93,15 @@ class Player:
     def getPieces(self):
         if self.pieces is not None:
             return self.pieces.values()
+
+    def getCachePoints(self):
+        points = 0
+        for pieceList in self.pieces.values():
+            for piece in pieceList:
+                if piece.alive:
+                    x, y = piece.getPosition()
+                    points += piecePoints[piece.getName()] * ((y * 8) + x)
+        return points
 
     def getPoints(self):
         points = 0
