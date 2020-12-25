@@ -94,26 +94,6 @@ def findNextMove(whitePieces, blackPieces, depth, board):
         future = executor.submit(findBestValue, pieceList, white_copy, black_copy, board_copy, depth, alpha, beta)
         futureList.append(future)
 
-    while True:
-        if (futureList[0].running()):
-            print("Task 1 running")
-        if (futureList[1].running()):
-            print("Task 2 running")
-        if futureList[2].running():
-            print("Task 3 running")
-        if (futureList[3].running()):
-            print("Task 4 running")
-        if (futureList[4].running()):
-            print("Task 5 running")
-        if (futureList[5].running()):
-            print("Task 6 running")
-
-        if (futureList[0].done() and futureList[1].done() and futureList[2].done() and futureList[3].done()
-                and futureList[4].done() and futureList[5].done()):
-            print(futureList[0].result(), futureList[1].result(), futureList[2].result(), futureList[3].result(),
-                  futureList[4].result(), futureList[5].result())
-            break
-
     for future in futureList:
         value, move = future.result()
 

@@ -257,7 +257,7 @@ def runGame():
                                 ((oldX, oldY), (newX, newY)) = move
                                 blackPiece = board[oldY][oldX]
                                 # transforming into queen
-                                if blackPiece.getName() == 'Pawn' and newY == 0:
+                                if blackPiece is not None and blackPiece.getName() == 'Pawn' and newY == 0:
                                     if board[newY][newX] is not None:
                                         temp_piece = board[newY][newX]
                                         whitePieces.remove(temp_piece)
@@ -380,6 +380,14 @@ def runGame():
                     if seeCheckMate(wKingX, wKingY, board, 'b'):
                         all_sprites_list.remove(checkHover)
                         setCheckMate(wKingX, wKingY)
+
+                if whitePieces.getPieces() == 1:
+                    x, y = whitePieces.getKing().getPosition()
+                    setCheckMate(x, y)
+
+                if blackPieces.getPieces() == 1:
+                    x, y = blackPieces.getKing().getPosition()
+                    setCheckMate(x, y)
 
         all_sprites_list.draw(screen)
         pygame.display.update()
