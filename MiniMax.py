@@ -47,11 +47,11 @@ def findBestValue(pieceList, whitePieces, blackPieces, board, depth, alpha, beta
                 white_copy = deepcopy(whitePieces)
                 black_copy = deepcopy(blackPieces)
                 piece_copy = black_copy.find(piece)
+                new_board = np.copy(board)
 
                 # threads work:
                 removed = False
                 temp_piece = None
-                new_board = np.copy(board)
                 oldX, oldY = piece_copy.getPosition()
                 new_board[oldY][oldX] = None
                 if new_board[y][x] is not None:
@@ -70,7 +70,6 @@ def findBestValue(pieceList, whitePieces, blackPieces, board, depth, alpha, beta
 
                 if bestValue > value:
                     bestValue = value
-                    # beta = value
                     bestMove = ((oldX, oldY), (x, y))
 
     return bestValue, bestMove
@@ -94,18 +93,18 @@ def findNextMove(whitePieces, blackPieces, depth, board):
         futureList.append(future)
 
     while True:
-        if futureList[0].running():
-            print("Task 1 running")
-        if futureList[1].running():
-            print("Task 2 running")
-        if futureList[2].running():
-            print("Task 3 running")
-        if futureList[3].running():
-            print("Task 4 running")
-        if futureList[4].running():
-            print("Task 5 running")
-        if futureList[5].running():
-            print("Task 6 running")
+        # if (futureList[0].running()):
+        #     print("Task 1 running")
+        # if (futureList[1].running()):
+        #     print("Task 2 running")
+        # if futureList[2].running():
+        #     print("Task 3 running")
+        # if (futureList[3].running()):
+        #     print("Task 4 running")
+        # if (futureList[4].running()):
+        #     print("Task 5 running")
+        # if (futureList[5].running()):
+        #     print("Task 6 running")
 
         if (futureList[0].done() and futureList[1].done() and futureList[2].done() and futureList[3].done()
                 and futureList[4].done() and futureList[5].done()):
@@ -137,15 +136,6 @@ def miniMax(whitePieces, blackPieces, depth, board, alpha, beta, maxing):
             for piece in pieceList:
                 if piece.alive:
                     for (x, y) in piece.showOptions(board, whitePieces, blackPieces, False):
-
-                        if depth == 3:
-                            # for concurrency, every thread will have its own unique blackPieces and whitePieces to
-                            # change so that there will be no race conditions
-                            # we copy at 3 since we assume the initial depth is 4
-                            black_copy = deepcopy(blackPieces)
-                        else:
-                            black_copy = blackPieces
-
                         removed = False
                         temp_piece = None
                         special_case = False
@@ -192,7 +182,7 @@ def miniMax(whitePieces, blackPieces, depth, board, alpha, beta, maxing):
                                     temp_piece.started()
                                     special_case = True
                             else:
-                                black_copy.remove(temp_piece)
+                                blackPieces.remove(temp_piece)
                                 removed = True
                                 new_board[y][x] = piece
                                 piece.setPosition(x, y)
@@ -200,7 +190,7 @@ def miniMax(whitePieces, blackPieces, depth, board, alpha, beta, maxing):
                             new_board[y][x] = piece
                             piece.setPosition(x, y)
 
-                        v = miniMax(whitePieces, black_copy, depth - 1, new_board, alpha, beta, False)
+                        v = miniMax(whitePieces, blackPieces, depth - 1, new_board, alpha, beta, False)
                         value = v.value
 
                         if special_case:
@@ -216,7 +206,7 @@ def miniMax(whitePieces, blackPieces, depth, board, alpha, beta, maxing):
                         # resetting back to original states
                         if removed:
                             new_board[y][x] = temp_piece
-                            black_copy.add(temp_piece)
+                            blackPieces.add(temp_piece)
                         new_board[oldY][oldX] = piece
                         piece.setPosition(oldX, oldY)
 
@@ -295,7 +285,7 @@ def miniMax(whitePieces, blackPieces, depth, board, alpha, beta, maxing):
                             temp_piece.setPosition(x, y)
                             temp_piece.start = True
                             piece.start = True
-                            value -= 10
+                            value += 10
 
                         bestValue = min(bestValue, value)
                         beta = min(beta, bestValue)

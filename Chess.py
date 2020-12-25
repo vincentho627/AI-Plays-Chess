@@ -232,18 +232,63 @@ def runGame():
                             selected = False
                             _, move = findNextMove(whitePieces, blackPieces, 4, board)
                             if move is not None:
+                                specialMove = False
                                 ((oldX, oldY), (newX, newY)) = move
                                 blackPiece = board[oldY][oldX]
                                 if board[newY][newX] is not None:
-                                    whitePieces.remove(board[newY][newX])
-                                    all_sprites_list.remove(board[newY][newX])
-                                board[oldY][oldX] = None
-                                board[newY][newX] = blackPiece
-                                blackPiece.setPosition(newX, newY)
-                                blackPiece.started()
+                                    curr_piece = board[oldY][oldX]
+                                    temp_piece = board[newY][newX]
+                                    if curr_piece.getColor() == temp_piece.getColor():
+                                        if curr_piece.getName() == 'King':
+                                            if temp_piece.getName() == 'Rook':
+                                                if newY == oldY:
+                                                    if newX == 7 and oldX == 4:
+                                                        temp_piece.setPosition(5, oldY)
+                                                        curr_piece.setPosition(6, oldY)
+                                                        specialMove = True
+                                                        temp_piece.started()
+                                                        curr_piece.started()
+                                                    elif newX == 0 and oldX == 4:
+                                                        temp_piece.setPosition(3, oldY)
+                                                        curr_piece.setPosition(2, oldY)
+                                                        specialMove = True
+                                                        temp_piece.started()
+                                                        curr_piece.started()
+                                                else:
+                                                    print("Error move!")
+                                        elif curr_piece.getName() == 'Rook':
+                                            if temp_piece.getName() == 'King':
+                                                if newY == oldY:
+                                                    if oldX == 7 and newX == 4:
+                                                        curr_piece.setPosition(5, oldY)
+                                                        temp_piece.setPosition(6, oldY)
+                                                        specialMove = True
+                                                        temp_piece.started()
+                                                        curr_piece.started()
+                                                    elif newX == 0 and oldX == 4:
+                                                        curr_piece.setPosition(3, oldY)
+                                                        temp_piece.setPosition(2, oldY)
+                                                        specialMove = True
+                                                        temp_piece.started()
+                                                        curr_piece.started()
+                                                    else:
+                                                        print("Error move!")
+                                        else:
+                                            print("Error move!")
+                                    else:
+                                        whitePieces.remove(board[newY][newX])
+                                        all_sprites_list.remove(board[newY][newX])
+
+                                if not specialMove:
+                                    board[oldY][oldX] = None
+                                    board[newY][newX] = blackPiece
+                                    blackPiece.setPosition(newX, newY)
+                                    blackPiece.started()
 
                             else:
-                                print("Error!")
+                                print("Error no moves left!")
+                                x, y = blackPieces.getKing().getPosition()
+                                setCheckMate(x, y)
                         else:
                             pass
                     if not selected:
