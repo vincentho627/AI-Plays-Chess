@@ -214,12 +214,14 @@ class Player:
         return False
 
     def add(self, chessPiece):
-        chessPiece.setLive()
-        self.pieceCount += 1
+        if chessPiece is not None:
+            chessPiece.setLive()
+            self.pieceCount += 1
 
     def remove(self, chessPiece):
-        chessPiece.setDied()
-        self.pieceCount -= 1
+        if chessPiece is not None:
+            chessPiece.setDied()
+            self.pieceCount -= 1
 
     def find(self, chessPiece):
         pieceList = self.pieces[chessPiece.getName()]

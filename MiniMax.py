@@ -56,7 +56,8 @@ def findBestValue(pieceList, whitePieces, blackPieces, board, depth, alpha, beta
                 new_board[oldY][oldX] = None
                 if new_board[y][x] is not None:
                     temp_piece = new_board[y][x]
-                    white_copy.remove(new_board[y][x])
+                    white_piece = white_copy.find(temp_piece)
+                    white_copy.remove(white_piece)
                     removed = True
                 new_board[y][x] = piece_copy
                 piece_copy.setPosition(x, y)
@@ -64,7 +65,8 @@ def findBestValue(pieceList, whitePieces, blackPieces, board, depth, alpha, beta
                 value = v.value
                 if removed:
                     new_board[y][x] = temp_piece
-                    white_copy.add(temp_piece)
+                    white_piece = white_copy.find(temp_piece)
+                    white_copy.add(white_piece)
                 new_board[oldY][oldX] = piece_copy
                 piece_copy.setPosition(oldX, oldY)
 
@@ -93,18 +95,18 @@ def findNextMove(whitePieces, blackPieces, depth, board):
         futureList.append(future)
 
     while True:
-        # if (futureList[0].running()):
-        #     print("Task 1 running")
-        # if (futureList[1].running()):
-        #     print("Task 2 running")
-        # if futureList[2].running():
-        #     print("Task 3 running")
-        # if (futureList[3].running()):
-        #     print("Task 4 running")
-        # if (futureList[4].running()):
-        #     print("Task 5 running")
-        # if (futureList[5].running()):
-        #     print("Task 6 running")
+        if (futureList[0].running()):
+            print("Task 1 running")
+        if (futureList[1].running()):
+            print("Task 2 running")
+        if futureList[2].running():
+            print("Task 3 running")
+        if (futureList[3].running()):
+            print("Task 4 running")
+        if (futureList[4].running()):
+            print("Task 5 running")
+        if (futureList[5].running()):
+            print("Task 6 running")
 
         if (futureList[0].done() and futureList[1].done() and futureList[2].done() and futureList[3].done()
                 and futureList[4].done() and futureList[5].done()):
@@ -182,7 +184,8 @@ def miniMax(whitePieces, blackPieces, depth, board, alpha, beta, maxing):
                                     temp_piece.started()
                                     special_case = True
                             else:
-                                blackPieces.remove(temp_piece)
+                                black_piece = blackPieces.find(temp_piece)
+                                blackPieces.remove(black_piece)
                                 removed = True
                                 new_board[y][x] = piece
                                 piece.setPosition(x, y)
@@ -206,7 +209,8 @@ def miniMax(whitePieces, blackPieces, depth, board, alpha, beta, maxing):
                         # resetting back to original states
                         if removed:
                             new_board[y][x] = temp_piece
-                            blackPieces.add(temp_piece)
+                            black_piece = blackPieces.find(temp_piece)
+                            blackPieces.add(black_piece)
                         new_board[oldY][oldX] = piece
                         piece.setPosition(oldX, oldY)
 
@@ -269,7 +273,8 @@ def miniMax(whitePieces, blackPieces, depth, board, alpha, beta, maxing):
                                     temp_piece.started()
                                     special_case = True
                             else:
-                                whitePieces.remove(new_board[y][x])
+                                white_piece = whitePieces.find(temp_piece)
+                                whitePieces.remove(white_piece)
                                 removed = True
                                 new_board[y][x] = piece
                                 piece.setPosition(x, y)
@@ -293,7 +298,8 @@ def miniMax(whitePieces, blackPieces, depth, board, alpha, beta, maxing):
                         # resetting back to original states
                         if removed:
                             new_board[y][x] = temp_piece
-                            whitePieces.add(temp_piece)
+                            white_piece = whitePieces.find(temp_piece)
+                            whitePieces.add(white_piece)
                         new_board[oldY][oldX] = piece
                         piece.setPosition(oldX, oldY)
 

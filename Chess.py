@@ -118,6 +118,26 @@ def moveChessPiece(chessPiece, x, y):
                 board[y][x] = chessPiece
                 board[oldY][oldX] = None
                 chessPiece.setPosition(x, y)
+        elif chessPiece.getName() == 'Pawn' and y == 7:
+            if board[y][x] is not None:
+                temp_piece = board[y][x]
+                if chessPiece.getColor() == 'w':
+                    blackPieces.remove(temp_piece)
+                    whitePieces.remove(chessPiece)
+                else:
+                    whitePieces.remove(temp_piece)
+                    blackPieces.remove(chessPiece)
+                board[y][x] = None
+                all_sprites_list.remove(temp_piece)
+            oldX, oldY = chessPiece.getPosition()
+            board[oldY][oldX] = None
+            all_sprites_list.remove(chessPiece)
+            newQueen = Queen(x, y, chessPiece.getColor())
+            newQueen.addSurfaces()
+            newQueen.addImages()
+            board[y][x] = newQueen
+            newQueen.started()
+            all_sprites_list.add(board[y][x])
         else:
             if board[y][x] is not None:
                 color = board[y][x].getColor()
@@ -233,11 +253,30 @@ def runGame():
                             _, move = findNextMove(whitePieces, blackPieces, 4, board)
                             if move is not None:
                                 specialMove = False
+                                queenChange = False
                                 ((oldX, oldY), (newX, newY)) = move
                                 blackPiece = board[oldY][oldX]
-                                if board[newY][newX] is not None:
+                                # transforming into queen
+                                if blackPiece.getName() == 'Pawn' and newY == 0:
+                                    if board[newY][newX] is not None:
+                                        temp_piece = board[newY][newX]
+                                        whitePieces.remove(temp_piece)
+                                        blackPieces.remove(blackPiece)
+                                        board[newY][newX] = None
+                                        all_sprites_list.remove(temp_piece)
+                                    board[oldY][oldX] = None
+                                    all_sprites_list.remove(blackPiece)
+                                    newQueen = Queen(newX, newY, 'b')
+                                    newQueen.addSurfaces()
+                                    newQueen.addImages()
+                                    board[newY][newX] = newQueen
+                                    newQueen.started()
+                                    all_sprites_list.add(board[newY][newX])
+                                    queenChange = True
+                                elif board[newY][newX] is not None:
                                     curr_piece = board[oldY][oldX]
                                     temp_piece = board[newY][newX]
+
                                     if curr_piece.getColor() == temp_piece.getColor():
                                         if curr_piece.getName() == 'King':
                                             if temp_piece.getName() == 'Rook':
@@ -279,7 +318,7 @@ def runGame():
                                         whitePieces.remove(board[newY][newX])
                                         all_sprites_list.remove(board[newY][newX])
 
-                                if not specialMove:
+                                if not specialMove and not queenChange:
                                     board[oldY][oldX] = None
                                     board[newY][newX] = blackPiece
                                     blackPiece.setPosition(newX, newY)
