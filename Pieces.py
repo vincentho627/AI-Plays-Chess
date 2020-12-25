@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 import pygame
 import numpy as np
 
@@ -151,21 +153,33 @@ class Player:
 
     def put_On_Board(self, board):
         for pawn in self.pawn:
+            pawn.addSurfaces()
+            pawn.addImages()
             x, y = pawn.getPosition()
             board[y][x] = pawn
         for rook in self.rook:
+            rook.addSurfaces()
+            rook.addImages()
             x, y = rook.getPosition()
             board[y][x] = rook
         for knight in self.knight:
+            knight.addSurfaces()
+            knight.addImages()
             x, y = knight.getPosition()
             board[y][x] = knight
         for bishop in self.bishop:
+            bishop.addSurfaces()
+            bishop.addImages()
             x, y = bishop.getPosition()
             board[y][x] = bishop
         for queen in self.queen:
+            queen.addSurfaces()
+            queen.addImages()
             x, y = queen.getPosition()
             board[y][x] = queen
         for king in self.king:
+            king.addSurfaces()
+            king.addImages()
             x, y = king.getPosition()
             board[y][x] = king
 
@@ -207,6 +221,13 @@ class Player:
         chessPiece.setDied()
         self.pieceCount -= 1
 
+    def find(self, chessPiece):
+        pieceList = self.pieces[chessPiece.getName()]
+        for piece in pieceList:
+            if piece.getPosition() == chessPiece.getPosition():
+                return piece
+        return None
+
 
 class White(Player):
     def __init__(self):
@@ -237,17 +258,43 @@ class Black(Player):
 
 
 class ChessPiece(pygame.sprite.Sprite):
-    def __init__(self, x, y, color):
-        super().__init__()
+    def __init__(self, x, y, color, needImage=True):
+        if needImage:
+            super().__init__()
         self.x = x
         self.y = y
         self.color = color
         self.start = True
         self.name = ""
         self.alive = True
+        self.image = None
+        self.rect = None
+        self.sprite = None
+
+    def __repr__(self):
+        return "<class 'Pieces.{}'>".format(self.name)
+
+    def __deepcopy__(self, memo=None):
+        if memo is None:
+            memo = {}
+        cls = self.name
+        result = pieceInitialisation[cls](self.x, self.y, self.color)
+        memo[id(self)] = result
+        for k, v in self.__dict__.items():
+            if k in {'x', 'y', 'color', 'start', 'name', 'alive', 'rect', 'rect.x', 'rect.y'}:
+                if k == 'rect':
+                    setattr(result, k, None)
+                else:
+                    setattr(result, k, deepcopy(v))
+            else:
+                continue
+        return result
+
+    def addSurfaces(self):
         self.image = pygame.Surface((60, 60), pygame.SRCALPHA, 32)
         self.rect = self.image.get_rect()
-        self.rect.x, self.rect.y = x * 60, abs((480 - 60) - y * 60)
+        self.rect.x, self.rect.y = self.x * 60, abs((480 - 60) - self.y * 60)
+        self.sprite = None
 
     def setDied(self):
         self.alive = False
@@ -319,7 +366,8 @@ class ChessPiece(pygame.sprite.Sprite):
     def setPosition(self, x, y):
         self.x = x
         self.y = y
-        self.rect.x, self.rect.y = x * 60, abs((480 - 60) - y * 60)
+        if self.rect is not None:
+            self.rect.x, self.rect.y = x * 60, abs((480 - 60) - y * 60)
 
     def getColor(self):
         return self.color
@@ -331,8 +379,9 @@ class ChessPiece(pygame.sprite.Sprite):
 class Pawn(ChessPiece):
     def __init__(self, x, y, color):
         super().__init__(x, y, color)
-        self.start = True
         self.name = "Pawn"
+
+    def addImages(self):
         self.sprite = pygame.image.load("assets/{}pawn.png".format(self.color))
         self.image.blit(self.sprite, (0, 0))
 
@@ -483,6 +532,8 @@ class Rook(ChessPiece):
     def __init__(self, x, y, color):
         super().__init__(x, y, color)
         self.name = "Rook"
+
+    def addImages(self):
         self.sprite = pygame.image.load("assets/{}rook.png".format(self.color))
         self.image.blit(self.sprite, (0, 0))
 
@@ -605,6 +656,8 @@ class Knight(ChessPiece):
     def __init__(self, x, y, color):
         super().__init__(x, y, color)
         self.name = "Knight"
+
+    def addImages(self):
         self.sprite = pygame.image.load("assets/{}knight.png".format(self.color))
         self.image.blit(self.sprite, (0, 0))
 
@@ -738,6 +791,8 @@ class Bishop(ChessPiece):
     def __init__(self, x, y, color):
         super().__init__(x, y, color)
         self.name = "Bishop"
+
+    def addImages(self):
         self.sprite = pygame.image.load("assets/{}bishop.png".format(self.color))
         self.image.blit(self.sprite, (0, 0))
 
@@ -825,6 +880,8 @@ class Queen(ChessPiece):
     def __init__(self, x, y, color):
         super().__init__(x, y, color)
         self.name = "Queen"
+
+    def addImages(self):
         self.sprite = pygame.image.load("assets/{}queen.png".format(self.color))
         self.image.blit(self.sprite, (0, 0))
 
@@ -985,6 +1042,8 @@ class King(ChessPiece):
     def __init__(self, x, y, color):
         super().__init__(x, y, color)
         self.name = "King"
+
+    def addImages(self):
         self.sprite = pygame.image.load("assets/{}king.png".format(self.color))
         self.image.blit(self.sprite, (0, 0))
 
@@ -1046,4 +1105,5 @@ class King(ChessPiece):
         return result
 
 
+pieceInitialisation = {"King": King, "Queen": Queen, "Rook": Rook, "Bishop" : Bishop, "Pawn": Pawn, "Knight": Knight}
 
