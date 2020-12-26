@@ -3,7 +3,7 @@ AI-Plays-Chess
 
 Introduction
 ------------
-Chess is a tactical game where each player has 16 pieces. The goal of the game is to capture your opponent's King while keeping your own well-guarded. Here I made an AI using the mini-max algorithm that tries to defeat the player playing against it.
+Chess is a tactical game where each player has 16 pieces. The goal of the game is to capture your opponent's King while keeping your own well-guarded. Here I made an AI using the mini-max algorithm with alpha-beta pruning and multithreading that tries to defeat the player playing against it.
 
 ![](assets/gameplay.png)
 
