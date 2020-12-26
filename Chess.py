@@ -7,6 +7,7 @@ from MiniMax import findNextMove
 screen = pygame.display.set_mode((60 * 8, 60 * 8))
 background_surface = pygame.image.load("assets/chessboard.png").convert()
 board = np.empty([8, 8], dtype=ChessPiece)
+pygame.display.set_caption("AI CHESS")
 
 all_sprites_list = pygame.sprite.Group()
 sprites = []
