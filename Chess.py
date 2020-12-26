@@ -321,8 +321,9 @@ def runGame():
                                 if not specialMove and not queenChange:
                                     board[oldY][oldX] = None
                                     board[newY][newX] = blackPiece
-                                    blackPiece.setPosition(newX, newY)
-                                    blackPiece.started()
+                                    if blackPiece is not None:
+                                        blackPiece.setPosition(newX, newY)
+                                        blackPiece.started()
 
                             else:
                                 print("Error no moves left!")
