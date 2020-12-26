@@ -48,6 +48,7 @@ Piece points:
 | King          | 900           |
 
 Piece position points:
+
 ![](assets/piece_evaluation.png)
 
 Minimax algorithm
