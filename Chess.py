@@ -89,7 +89,7 @@ def moveChessPiece(chessPiece, x, y):
                 chessPiece.setPosition(x, y)
         elif chessPiece.getName() == 'Rook' and chessPiece.start and (oldX == 7 or oldX == 0) and y == oldY:
             if oldX == 7 and board[oldY][5] is None and board[oldY][6] is None and board[oldY][4] is not None \
-                    and board[oldY][4].start:
+                    and board[oldY][4].start and x == 4:
                 king = board[y][x]
                 board[y][oldX - 1] = king
                 board[y][x] = None
@@ -252,7 +252,6 @@ def runGame():
                         if moved:
                             selected = False
                             _, move = findNextMove(whitePieces, blackPieces, 4, board)
-                            print(move)
                             if move is not None:
                                 specialMove = False
                                 queenChange = False
