@@ -252,6 +252,7 @@ def runGame():
                         if moved:
                             selected = False
                             _, move = findNextMove(whitePieces, blackPieces, 4, board)
+                            print(move)
                             if move is not None:
                                 specialMove = False
                                 queenChange = False
@@ -288,12 +289,20 @@ def runGame():
                                                         specialMove = True
                                                         temp_piece.started()
                                                         curr_piece.started()
+                                                        board[oldY][oldX] = None
+                                                        board[newY][newX] = None
+                                                        board[oldY][5] = temp_piece
+                                                        board[oldY][6] = curr_piece
                                                     elif newX == 0 and oldX == 4:
                                                         temp_piece.setPosition(3, oldY)
                                                         curr_piece.setPosition(2, oldY)
                                                         specialMove = True
                                                         temp_piece.started()
                                                         curr_piece.started()
+                                                        board[oldY][oldX] = None
+                                                        board[newY][newX] = None
+                                                        board[oldY][2] = curr_piece
+                                                        board[oldY][3] = temp_piece
                                                 else:
                                                     print("Error move!")
                                         elif curr_piece.getName() == 'Rook':
@@ -305,12 +314,20 @@ def runGame():
                                                         specialMove = True
                                                         temp_piece.started()
                                                         curr_piece.started()
+                                                        board[oldY][oldX] = None
+                                                        board[newY][newX] = None
+                                                        board[oldY][5] = curr_piece
+                                                        board[oldY][6] = temp_piece
                                                     elif newX == 0 and oldX == 4:
                                                         curr_piece.setPosition(3, oldY)
                                                         temp_piece.setPosition(2, oldY)
                                                         specialMove = True
                                                         temp_piece.started()
                                                         curr_piece.started()
+                                                        board[oldY][oldX] = None
+                                                        board[newY][newX] = None
+                                                        board[oldY][3] = curr_piece
+                                                        board[oldY][2] = temp_piece
                                                     else:
                                                         print("Error move!")
                                         else:
