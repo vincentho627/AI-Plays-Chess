@@ -90,14 +90,14 @@ def findNextMove(whitePieces, blackPieces, depth, board):
     board_copy = deepcopy(board)
 
     for pieceList in black_copy.getPieces():
-
-        future = executor.submit(findBestValue, pieceList, white_copy, black_copy, board_copy, depth, alpha, beta)
-        futureList.append(future)
+        if pieceList:
+            future = executor.submit(findBestValue, pieceList, white_copy, black_copy, board_copy, depth, alpha, beta)
+            futureList.append(future)
 
     for future in futureList:
         value, move = future.result()
 
-        if bestValue > value:
+        if bestValue >= value:
             bestValue = value
             bestMove = move
 
