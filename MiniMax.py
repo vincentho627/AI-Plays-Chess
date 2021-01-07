@@ -70,7 +70,7 @@ def findBestValue(pieceList, whitePieces, blackPieces, board, depth, alpha, beta
                 new_board[oldY][oldX] = piece_copy
                 piece_copy.setPosition(oldX, oldY)
 
-                if bestValue > value:
+                if bestValue >= value:
                     bestValue = value
                     bestMove = ((oldX, oldY), (x, y))
 
